@@ -12,12 +12,10 @@ public:
 
 class MyClass1 : public MyClassInterFace
 {
-private:
-	PROPERTY(int, a, AA)
-	PROPERTY(int, b, BB)
-	//int a = 0;
-	//int b = 0;
 public:
+	int a;
+	int b;
+
 	virtual void PrintVariable()
 	{
 		std::cout << a << "," << b << std::endl;
@@ -26,43 +24,81 @@ public:
 
 class MyClass2 : public MyClassInterFace
 {
-
-private:
-	PROPERTY(float, a, AA)
-	PROPERTY(float, b, BB)
 public:
+	float a;
+	float b;
 	virtual void PrintVariable()
 	{
 		std::cout << a << "," << b << std::endl;
 	}
 };
 
+
 class MyClassFactoryInterface
 {
 public:
-	virtual MyClassInterFace* CreateInstance() = 0;
+	virtual MyClassInterFace* CreateInstanceA() = 0;
+	virtual MyClassInterFace* CreateInstanceB() = 0;
 };
 
 class MyClassFactory1 : public MyClassFactoryInterface
 {
+private:
+	MyClassFactory1() {}
+
+
 public:
-	virtual MyClassInterFace* CreateInstance()
+
+	static MyClassFactory1* GetInstance()
+	{
+		static MyClassFactory1 instance;
+		return &instance;
+	}
+
+	virtual MyClassInterFace* CreateInstanceA()
 	{
 		MyClass1* instance = new MyClass1();
-		instance->AA(10);
-		instance->BB(20);
+		instance->a = 10;
+		instance->b = 20;
+		return instance;
+	}
+
+	virtual MyClassInterFace* CreateInstanceB()
+	{
+		MyClass2* instance = new MyClass2();
+		instance->a = 3.4444f;
+		instance->b = 2.5555f;
 		return instance;
 	}
 };
 
 class MyClassFactory2 : public MyClassFactoryInterface
 {
+private:
+	MyClassFactory2() {}
+
+
 public:
-	virtual MyClassInterFace* CreateInstance()
+
+	static MyClassFactory2* GetInstance()
+	{
+		static MyClassFactory2 instance;
+		return &instance;
+	}
+
+	virtual MyClassInterFace* CreateInstanceA()
+	{
+		MyClass1* instance = new MyClass1();
+		instance->a = 30;
+		instance->b = 50;
+		return instance;
+	}
+
+	virtual MyClassInterFace* CreateInstanceB()
 	{
 		MyClass2* instance = new MyClass2();
-		instance->AA(3.4444f);
-		instance->BB(2.5555f);
+		instance->a = 8.4444f;
+		instance->b = 111.5555f;
 		return instance;
 	}
 };
@@ -72,11 +108,14 @@ public:
 int main()
 {
     std::cout << "Hello World!\n"; 
-	MyClassFactoryInterface* factory1 = new MyClassFactory1();
-	factory1->CreateInstance()->PrintVariable();
 
-	MyClassFactoryInterface* factory2 = new MyClassFactory2();
-	factory2->CreateInstance()->PrintVariable();
+	MyClassFactory1::GetInstance()->CreateInstanceA()->PrintVariable();
+
+	MyClassFactory1::GetInstance()->CreateInstanceB()->PrintVariable();
+
+	MyClassFactory1::GetInstance()->CreateInstanceA()->PrintVariable();
+
+	MyClassFactory2::GetInstance()->CreateInstanceB()->PrintVariable();
 }
 
 // 프로그램 실행: <Ctrl+F5> 또는 [디버그] > [디버깅하지 않고 시작] 메뉴
